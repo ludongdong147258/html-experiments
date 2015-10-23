@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Acne</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+    <style media="screen">
+      .acne {
+        color: royalblue;
+        font-family: sans-serif;
+        text-align: center;
+        text-shadow: 0 0 1px royalblue;
+        line-height: 2em;
+      }
+
+      .acne hr {
+        border-color: royalblue;
+        margin-bottom: 3em;
+      }
+
+      .acne #canvas {
+        background-color: navajowhite;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -10;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="acne">
+      <h1>Defeat the acne!</h1>
+      <p>
+        at least on this site...<br>
+        <em>HINT: move mouse over acne dots.</em>
+      </p>
+      <hr>
+      <p>
+        Also imagine a website content...<br>
+        Running in front of this fancy interactive background...<br>
+        And...<br>
+        Advertizing your awesome anti-acne solution...
+      </p>
+      <canvas id="canvas" width="300" height="300"></canvas>
+    </div>
+    <script type="text/javascript">
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      function generate_acne(){
+        var points = 69;
+        var radius = Math.max(canvas.width, canvas.height) * 0.01
+        while(points > 0) {
+          points--;
+          var x = Math.random()*canvas.width;
+          var y = Math.random()*canvas.height;
+          var gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+          gradient.addColorStop(0, 'rgba(220, 20, 60, 0.75)'); //crimson
+          gradient.addColorStop(1, 'rgba(220, 20, 60, 0)'); //crimson
+          ctx.fillStyle = gradient;
+          ctx.fillRect(x-radius, y-radius, radius*2.01, radius*2.01); //i believe drawing rect instead of arc optimizes things a bit
+        }
+      }
+
+      function resize() {
+        canvas.width = Math.max(document.body.offsetWidth, window.innerWidth);
+        canvas.height = Math.max(document.body.offsetHeight, window.innerHeight);
+        canvas.style.width = canvas.width+'px';
+        canvas.style.height = canvas.height+'px';
+        generate_acne()
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      function draw(x, y) {
+        var radius = Math.max(canvas.width, canvas.height) * 0.05;
+        var gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, 'rgba(255, 222, 173, 1)'); //navajowhite
+        gradient.addColorStop(1, 'rgba(255, 222, 173, 0)'); //navajowhite
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x-radius, y-radius, radius*2.01, radius*2.01); //i believe drawing rect instead of arc optimizes things a bit
+      }
+
+      document.body.addEventListener('mousemove', function (event) {
+        draw(event.pageX, event.pageY);
+      });
+
+      document.body.addEventListener('touchmove', function (event) {
+        var touch = event.changedTouches[0];
+        draw(touch.pageX, touch.pageY);
+      });
+    </script>
+  </body>
+</html>

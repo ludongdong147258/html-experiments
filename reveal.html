@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Reveal</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+    <style media="screen">
+      .act {
+        font-family: sans-serif;
+        text-align: center;
+        line-height: 2em;
+        font-size:2em;
+      }
+
+      .act .reveal {
+        color: white;
+        text-shadow: 0 0 1em white;
+      }
+
+      .act .hide {
+        color: black;
+        text-shadow: 0 0 1em black;
+      }
+
+      .act #canvas {
+        background-color: white;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -10;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="act">
+      <p class="hide">
+        Reveal the text...
+      </p>
+      <p class="reveal">
+        And hide another...
+      </p>
+      <canvas id="canvas" width="300" height="300"></canvas>
+    </div>
+    <script type="text/javascript">
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width = Math.max(document.body.offsetWidth, window.innerWidth);
+        canvas.height = Math.max(document.body.offsetHeight, window.innerHeight);
+        canvas.style.width = canvas.width+'px';
+        canvas.style.height = canvas.height+'px';
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      function draw(x, y) {
+        var radius = Math.max(canvas.width, canvas.height) * 0.1;
+        var gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 1)'); //black
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)'); //black
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x-radius, y-radius, radius*2.01, radius*2.01); //i believe drawing rect instead of arc optimizes things a bit
+      }
+
+      document.body.addEventListener('mousemove', function (event) {
+        draw(event.pageX, event.pageY);
+      });
+
+      document.body.addEventListener('touchmove', function (event) {
+        var touch = event.changedTouches[0];
+        draw(touch.pageX, touch.pageY);
+      });
+    </script>
+  </body>
+</html>

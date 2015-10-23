@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Clock</title>
+    <style media="screen">
+      body {
+        background-color: crimson;
+      }
+      #canvas {
+        width: 600px;
+        margin: 0 auto;
+        display: block;
+        background-color: crimson;
+      }
+    </style>
+    <script type="text/javascript">
+      function Clock (canvas, color) {
+        this.color = color || 'black'
+        this.c = canvas;
+        this.ctx = this.c.getContext('2d');
+        this.running = false;
+
+        this.resize(this.c.width, this.c.height);
+
+        var self = this;
+        this._reqAnmFrm = function(){
+          self.draw()
+        }
+
+        this.setRunning(true);
+      };
+
+      Clock.prototype.setRunning = function (isRunning) {
+        this.running = isRunning;
+        if(this.running) window.requestAnimationFrame(this._reqAnmFrm);
+      };
+
+      Clock.prototype.draw = function () {
+        var ctx = this.ctx
+
+        ctx.clearRect(0, 0, this.w, this.h);
+
+        var d = new Date();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        var s = d.getSeconds();
+        var ms = d.getMilliseconds();
+
+        var pi2 = Math.PI*2;
+
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.color;
+
+        ctx.save();
+
+        ctx.translate(this.hw, this.hh);
+        ctx.rotate(-Math.PI/2);
+        ctx.lineWidth = this.hr;
+        ctx.beginPath();
+        var start = 0; var end = pi2 * ms/1000;
+        if(s%2==0) {
+          start = end;
+          end = 0;
+        }
+        ctx.arc(0, 0, this.hr/2, start, end, true);
+        ctx.stroke();
+
+        ctx.lineWidth = this.hr/4;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.hr*1.25, 0, pi2 * m/60);
+        ctx.stroke();
+
+        // ctx.lineWidth = this.hr/4;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.hr*1.6, 0, pi2 * h/24);
+        ctx.stroke();
+
+        ctx.lineWidth = this.hr/8;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.hr*1.9, 0, pi2 * (s+ms/1000)/60);
+        ctx.stroke();
+
+        ctx.restore();
+
+        ctx.save();
+
+        ctx.translate(this.hw, this.hh);
+        ctx.scale(3, 3);
+        ctx.fillText(h+':'+m+':'+s, 0-this.hr/8, 0+this.hr/4);
+
+        ctx.restore();
+
+        if(this.running) window.requestAnimationFrame(this._reqAnmFrm);
+      };
+
+      Clock.prototype.resize = function (width, height) {
+        this.w = width;
+        this.h = height;
+        this.hw = this.w/2;
+        this.hh = this.h/2;
+        this.r = Math.min(this.hw, this.hh);
+        this.hr = this.r/2;
+      };
+
+      Clock.prototype.destroy = function () {
+        this.setRunning(false)
+      };
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="600"></canvas>
+    <script type="text/javascript">
+      new Clock(document.getElementById('canvas'));
+    </script>
+  </body>
+</html>
